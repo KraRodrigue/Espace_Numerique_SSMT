@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Notes - Admin UFR SSMT</title>
+    <link rel="stylesheet" href="Admin.css">
+  
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="Sidebar1"></div>
+    <div class="main-content"> 
+        <!-- Admin Bar -->
+        <div class="admin-bar">
+            <h4><i class="fa-solid fa-lock"></i> Mode Administrateur - Saisie et Modification des Notes</h4>
+            <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Retour à la liste</button>
+        </div>
+
+        <!-- Search Student Section -->
+        <div class="search-section">
+            <div class="search-header">
+                <h3><i class="fa-solid fa-magnifying-glass"></i> Sélectionner un étudiant</h3>
+            </div>
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="studentSearch" 
+                    placeholder="Rechercher par N° Carte, Nom ou Prénom..."
+                    list="studentsList">
+                <datalist id="studentsList">
+                    <option value="ETU2024001 - KOUASSI Jean-Marc">
+                    <option value="ETU2024002 - YAO Marie-Claire">
+                    <option value="ETU2024003 - TRAORÉ Abdoulaye">
+                    <option value="ETU2024004 - KOUAMÉ Aya Brigitte">
+                    <option value="ETU2024005 - N'GUESSAN Patrick">
+                </datalist>
+                <button class="btn-search" onclick="loadStudentNotes()"><i class="fa-solid fa-arrow-right"></i> Charger</button>
+            </div>
+        </div>
+
+        <!-- Student Header -->
+        <div class="student-header" id="studentHeader" style="display: none;">
+            <div class="student-photo">
+                <i class="fa-solid fa-user-graduate fa-2x"></i>
+            </div>
+            <div class="student-info">
+                <div class="student-name" id="studentName">KOUASSI Jean-Marc</div>
+                <div class="student-details">
+                    <div class="detail-item">
+                        <i class="fa-solid fa-id-card"></i>
+                        <span><strong>N° Carte:</strong> <span id="studentCard">ETU2024001</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-book"></i>
+                        <span><strong>Niveau:</strong> <span id="studentLevel">Licence 3</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span><strong>Spécialité:</strong> <span id="studentSpeciality">Mathématiques</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span><strong>Année:</strong> <span id="academicYear">2024-2025</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relevé de Notes -->
+        <div class="releve-container" id="releveContainer" style="display: none;">
+            <div class="releve-header">
+                <h2><i class="fa-solid fa-clipboard"></i> Gestion des Notes</h2>
+                <p>Semestre 1 - Année Académique 2024-2025</p>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="summary-stats">
+                <div class="stat-box primary">
+                    <div class="stat-label">Moyenne Générale</div>
+                    <div class="stat-value" id="moyenneGenerale">--</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="stat-label">UE Validées</div>
+                    <div class="stat-value" id="ueValidees">--</div>
+                </div>
+                <div class="stat-box warning">
+                    <div class="stat-label">Crédits Acquis</div>
+                    <div class="stat-value" id="creditsAcquis">--</div>
+                </div>
+                <div class="stat-box info">
+                    <div class="stat-label">Notes Modifiées</div>
+                    <div class="stat-value" id="notesModified">0</div>
+                </div>
+            </div>
+
+            <!-- Notes Table -->
+            <table class="notes-table">
+                <thead>
+                    <tr>
+                        <th>Code UE</th>
+                        <th>Intitulé de l'UE</th>
+                        <th class="center">Devoirs<br>/20</th>
+                        <th class="center">Examen<br>/20</th>
+                        <th class="center">Moyenne<br>/20</th>
+                        <th class="center">Crédits</th>
+                        <th class="center">Statut</th>
+                        <th class="center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="notesTableBody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4"><strong>TOTAL</strong></td>
+                        <td class="center"><strong id="totalMoyenne">--</strong></td>
+                        <td class="center"><strong id="totalCredits">--</strong></td>
+                        <td class="center">
+                            <span class="badge badge-success" id="totalStatus">--</span>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="saveAllNotes()">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer toutes les modifications
+                </button>
+                <button class="btn btn-warning" onclick="publishResults()">
+                    <i class="fa-solid fa-upload"></i> Publier les résultats
+                </button>
+                <button class="btn btn-primary" onclick="previewStudentView()">
+                    <i class="fa-solid fa-eye"></i> Aperçu étudiant
+                </button>
+                <button class="btn btn-danger" onclick="resetNotes()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Réinitialiser
+                </button>
+            </div>
+        </div>
+    </div>
+<script>
+        // Sample UE data for L3 Mathématiques
+        const ueData = {
+            'L3': [
+                { code: 'MAT301', name: 'Analyse Complexe', credits: 6 },
+                { code: 'MAT302', name: 'Topologie', credits: 6 },
+                { code: 'MAT303', name: 'Probabilités et Statistiques', credits: 6 },
+                { code: 'MAT304', name: 'Équations Différentielles', credits: 6 },
+                { code: 'MAT305', name: 'Algèbre Linéaire Avancée', credits: 6 },
+                { code: 'INF301', name: 'Programmation Orientée Objet', credits: 3 },
+                { code: 'INF302', name: 'Base de Données', credits: 3 },
+                { code: 'PHY301', name: 'Mécanique Quantique', credits: 6 },
+                { code: 'PHY302', name: 'Thermodynamique Statistique', credits: 3 },
+                { code: 'ANG301', name: 'Anglais Scientifique III', credits: 3 },
+                { code: 'MTH301', name: 'Méthodologie de Recherche', credits: 3 },
+                { code: 'NUM301', name: 'Analyse Numérique', credits: 6 },
+                { code: 'OPT301', name: 'Optimisation', credits: 3 },
+                { code: 'LOG301', name: 'Logique Mathématique', credits: 3 }
+            ]
+        };
+
+        // Current student notes
+        let studentNotes = {};
+        let modifiedNotes = new Set();
+
+        // Calculate moyenne (40% devoirs + 60% examen)
+        function calculateMoyenne(devoirs, examen) {
+            if (devoirs === '' || examen === '') return '--';
+            const d = parseFloat(devoirs);
+            const e = parseFloat(examen);
+            if (isNaN(d) || isNaN(e)) return '--';
+            return (d * 0.4 + e * 0.6).toFixed(2);
+        }
+
+        // Validate note
+        function validateNote(value) {
+            if (value === '') return true;
+            const num = parseFloat(value);
+            return !isNaN(num) && num >= 0 && num <= 20;
+        }
+
+        // Get status
+        function getStatus(moyenne) {
+            if (moyenne === '--') return '';
+            return parseFloat(moyenne) >= 10 ? 'Validé' : 'Non validé';
+        }
+
+        // Get note class
+        function getNoteClass(moyenne) {
+            if (moyenne === '--') return '';
+            const m = parseFloat(moyenne);
+            if (m >= 14) return 'success';
+            if (m >= 10) return 'warning';
+            return 'danger';
+        }
+
+        // Load student notes
+        function loadStudentNotes() {
+            const searchValue = document.getElementById('studentSearch').value;
+            if (!searchValue) {
+                showNotification('Veuillez sélectionner un étudiant', 'warning');
+                return;
+            }
+
+            // Show student info
+            document.getElementById('studentHeader').style.display = 'flex';
+            document.getElementById('releveContainer').style.display = 'block';
+
+            // Simulate loading saved notes (would come from database)
+            studentNotes = {
+                'MAT301': { devoirs: 14, examen: 16 },
+                'MAT302': { devoirs: 12, examen: 13 },
+                'MAT303': { devoirs: 15, examen: 17 },
+                'MAT304': { devoirs: 13, examen: 14 },
+                'MAT305': { devoirs: 16, examen: 18 },
+                'INF301': { devoirs: 17, examen: 16 },
+                'INF302': { devoirs: 14, examen: 15 },
+                'PHY301': { devoirs: 11, examen: 12 },
+                'PHY302': { devoirs: 10, examen: 11 },
+                'ANG301': { devoirs: 15, examen: 14 },
+                'MTH301': { devoirs: 16, examen: 17 },
+                'NUM301': { devoirs: 13, examen: 15 },
+                'OPT301': { devoirs: '', examen: '' },
+                'LOG301': { devoirs: '', examen: '' }
+            };
+
+            populateNotesTable();
+            updateStatistics();
+            showNotification('Notes chargées avec succès', 'success');
+        }
+
+        // Populate notes table
+        function populateNotesTable() {
+            const tbody = document.getElementById('notesTableBody');
+            tbody.innerHTML = '';
+
+            ueData['L3'].forEach(ue => {
+                const notes = studentNotes[ue.code] || { devoirs: '', examen: '' };
+                const moyenne = calculateMoyenne(notes.devoirs, notes.examen);
+                const status = getStatus(moyenne);
+                const noteClass = getNoteClass(moyenne);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="ue-code">${ue.code}</span></td>
+                    <td><span class="ue-name">${ue.name}</span></td>
+                    <td class="center">
+                        <input 
+                            type="number" 
+                            class="note-input" 
+                            id="devoirs-${ue.code}"
+                            value="${notes.devoirs}"
+                            min="0" 
+                            max="20" 
+                            step="0.25"
+                            placeholder="0.00"
+                            onchange="handleNoteChange('${ue.code}', 'devoirs')"
+                            onkeyup="handleNoteChange('${ue.code}', 'devoirs')">
+                    </td>
+                    <td class="center">
+                        <input 
+                            type="number" 
+                            class="note-input" 
+                            id="examen-${ue.code}"
+                            value="${notes.examen}"
+                            min="0" 
+                            max="20" 
+                            step="0.25"
+                            placeholder="0.00"
+                            onchange="handleNoteChange('${ue.code}', 'examen')"
+                            onkeyup="handleNoteChange('${ue.code}', 'examen')">
+                    </td>
+                    <td class="center">
+                        <span class="note-value ${noteClass}" id="moyenne-${ue.code}">${moyenne}</span>
+                    </td>
+                    <td class="center">${ue.credits}</td>
+                    <td class="center">
+                        <span class="badge badge-${status === 'Validé' ? 'success' : 'danger'}" id="status-${ue.code}">
+                            ${status || '--'}
+                        </span>
+                    </td>
+                    <td class="center">
+                        <div class="row-actions">
+                            <button class="btn-save" id="save-${ue.code}" onclick="saveUENotes('${ue.code}')" disabled>
+                                💾
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Handle note change
+        function handleNoteChange(ueCode, type) {
+            const input = document.getElementById(`${type}-${ueCode}`);
+            const value = input.value;
+
+            // Validate
+            if (validateNote(value)) {
+                input.classList.remove('invalid');
+                input.classList.add('valid');
+            } else {
+                input.classList.add('invalid');
+                input.classList.remove('valid');
+                return;
+            }
+
+            // Update student notes
+            if (!studentNotes[ueCode]) studentNotes[ueCode] = { devoirs: '', examen: '' };
+            studentNotes[ueCode][type] = value;
+
+            // Mark as modified
+            modifiedNotes.add(ueCode);
+
+            // Enable save button for this row
+            const saveBtn = document.getElementById(`save-${ueCode}`);
+            if (saveBtn) saveBtn.disabled = false;
+
+            // Update moyenne and status
+            const devoirs = document.getElementById(`devoirs-${ueCode}`).value;
+            const examen = document.getElementById(`examen-${ueCode}`).value;
+            const moyenne = calculateMoyenne(devoirs, examen);
+            const status = getStatus(moyenne);
+            const noteClass = getNoteClass(moyenne);
+
+            const moyenneEl = document.getElementById(`moyenne-${ueCode}`);
+            moyenneEl.textContent = moyenne;
+            moyenneEl.className = `note-value ${noteClass}`;
+
+            const statusEl = document.getElementById(`status-${ueCode}`);
+            statusEl.textContent = status || '--';
+            statusEl.className = `badge badge-${status === 'Validé' ? 'success' : 'danger'}`;
+
+            updateStatistics();
+        }
+
+        // Save UE notes
+        function saveUENotes(ueCode) {
+            const devoirs = document.getElementById(`devoirs-${ueCode}`).value;
+            const examen = document.getElementById(`examen-${ueCode}`).value;
+
+            if (!validateNote(devoirs) || !validateNote(examen)) {
+                showNotification('Veuillez saisir des notes valides (0-20)', 'danger');
+                return;
+            }
+
+            // Simulate saving to database
+            modifiedNotes.delete(ueCode);
+            const saveBtn = document.getElementById(`save-${ueCode}`);
+            if (saveBtn) saveBtn.disabled = true;
+
+            showNotification(`Notes de ${ueCode} enregistrées avec succès`, 'success');
+            updateStatistics();
+        }
+
+        // Save all notes
+        function saveAllNotes() {
+            let invalidCount = 0;
+            let savedCount = 0;
+
+            ueData['L3'].forEach(ue => {
+                const devoirs = document.getElementById(`devoirs-${ue.code}`).value;
+                const examen = document.getElementById(`examen-${ue.code}`).value;
+
+                if (devoirs !== '' || examen !== '') {
+                    if (!validateNote(devoirs) || !validateNote(examen)) {
+                        invalidCount++;
+                    } else {
+                        savedCount++;
+                    }
+                }
+            });
+
+            if (invalidCount > 0) {
+                showNotification(`${invalidCount} note(s) invalide(s). Veuillez corriger avant d'enregistrer.`, 'warning');
+                return;
+            }
+
+            if (savedCount === 0) {
+                showNotification('Aucune note à enregistrer', 'warning');
+                return;
+            }
+
+            // Simulate saving all to database
+            modifiedNotes.clear();
+            document.querySelectorAll('.btn-save').forEach(btn => btn.disabled = true);
+
+            showNotification(`Toutes les notes (${savedCount}) ont été enregistrées avec succès`, 'success');
+            document.getElementById('notesModified').textContent = '0';
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            let totalMoyenne = 0;
+            let totalCredits = 0;
+            let creditsAcquis = 0;
+            let ueValidees = 0;
+            let countMoyennes = 0;
+
+            ueData['L3'].forEach(ue => {
+                const devoirs = document.getElementById(`devoirs-${ue.code}`).value;
+                const examen = document.getElementById(`examen-${ue.code}`).value;
+                const moyenne = calculateMoyenne(devoirs, examen);
+
+                totalCredits += ue.credits;
+
+                if (moyenne !== '--') {
+                    const m = parseFloat(moyenne);
+                    totalMoyenne += m;
+                    countMoyennes++;
+
+                    if (m >= 10) {
+                        creditsAcquis += ue.credits;
+                        ueValidees++;
+                    }
+                }
+            });
+
+            const moyenneGenerale = countMoyennes > 0 ? (totalMoyenne / countMoyennes).toFixed(2) : '--';
+            document.getElementById('moyenneGenerale').textContent = moyenneGenerale;
+            document.getElementById('ueValidees').textContent = `${ueValidees}/${ueData['L3'].length}`;
+            document.getElementById('creditsAcquis').textContent = `${creditsAcquis}/${totalCredits}`;
+            document.getElementById('notesModified').textContent = modifiedNotes.size;
+            document.getElementById('totalMoyenne').textContent = moyenneGenerale;
+            document.getElementById('totalCredits').textContent = `${creditsAcquis}/${totalCredits}`;
+
+            const admissionStatus = moyenneGenerale !== '--' && parseFloat(moyenneGenerale) >= 10 ? 'ADMIS' : 'AJOURNÉ';
+            const statusBadge = document.getElementById('totalStatus');
+            statusBadge.textContent = moyenneGenerale !== '--' ? admissionStatus : '--';
+            statusBadge.className = `badge badge-${admissionStatus === 'ADMIS' ? 'success' : 'danger'}`;
+        }
+
+        // Publish results
+        function publishResults() {
+            if (modifiedNotes.size > 0) {
+                const confirm = window.confirm('Vous avez des modifications non enregistrées. Voulez-vous les enregistrer avant de publier ?');
+                if (confirm) {
+                    saveAllNotes();
+                }
+            }
+
+            const confirmPublish = window.confirm('Êtes-vous sûr de vouloir publier ces résultats ? Les étudiants pourront les consulter.');
+            if (confirmPublish) {
+                showNotification('Résultats publiés avec succès. Les étudiants peuvent maintenant les consulter.', 'success');
+            }
+        }
+
+        // Preview student view
+        function previewStudentView() {
+            const card = document.getElementById('studentCard').textContent;
+            const name = document.getElementById('studentName').textContent;
+            // In real app, would open in new tab or modal
+            showNotification('Aperçu de la vue étudiant (fonctionnalité à implémenter)', 'info');
+        }
+
+        // Reset notes
+        function resetNotes() {
+            const confirm = window.confirm('Êtes-vous sûr de vouloir réinitialiser toutes les notes ? Cette action est irréversible.');
+            if (!confirm) return;
+
+            ueData['L3'].forEach(ue => {
+                document.getElementById(`devoirs-${ue.code}`).value = '';
+                document.getElementById(`examen-${ue.code}`).value = '';
+                studentNotes[ue.code] = { devoirs: '', examen: '' };
+            });
+
+            modifiedNotes.clear();
+            populateNotesTable();
+            updateStatistics();
+            showNotification('Toutes les notes ont été réinitialisées', 'warning');
+        }
+
+        // Go back
+        function goBack() {
+            if (modifiedNotes.size > 0) {
+                const confirm = window.confirm('Vous avez des modifications non enregistrées. Voulez-vous vraiment quitter ?');
+                if (!confirm) return;
+            }
+            // In real app: window.location.href = 'gestion-etudiants.html';
+            showNotification('Retour à la liste des étudiants', 'info');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'var(--success)',
+                danger: 'var(--danger)',
+                warning: 'var(--warning)',
+                info: 'var(--info)'
+            };
+
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                z-index: 9999;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+            `;
+            notification.textContent = message;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            if (!document.querySelector('style[data-notifications]')) {
+                style.setAttribute('data-notifications', 'true');
+                document.head.appendChild(style);
+            }
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Auto-save reminder
+        setInterval(() => {
+            if (modifiedNotes.size > 0) {
+                console.log(`${modifiedNotes.size} notes modifiées non enregistrées`);
+            }
+        }, 30000); // Check every 30 seconds
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+S to save all
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    saveAllNotes();
+                }
+            });
+        });
+
+
+
+
+        /* injection du header administration  */
+
+        document.addEventListener("DOMContentLoaded", () => {
+        fetch("headerAdmin.html") // <-- adapte le chemin selon ton dossier
+            .then(response => {
+            if (!response.ok) throw new Error("Fichier introuvable !");
+            return response.text();
+            })
+            .then(html => {
+            document.getElementById("Sidebar1").innerHTML = html;
+            })
+            .catch(err => console.error("Erreur lors du chargement de la sidebar :", err));
+        });
+
+
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1); // récupère 'AjouterunÉtudiant'
+            if (!hash) return;
+
+            const targetBtn = document.getElementById(hash);
+            if (!targetBtn) return;
+
+            // On simule le clic **après le chargement complet**
+            setTimeout(() => {
+                targetBtn.click();
+            }, 50); // 50ms suffisent
+        });
+
+    </script>    
+</body>
+
+</html>

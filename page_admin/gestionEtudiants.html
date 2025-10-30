@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Étudiants - UFR SSMT</title>
+    <link rel="stylesheet" href="Admin.css">
+
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div id="Sidebar1"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1>Gestion des Étudiants</h1>
+            </div>
+
+            <!-- Page Toggle -->
+            <div class="page-toggle">
+                <button class="toggle-btn active" onclick="showPage('liste')">
+                    <i class="fa-solid fa-clipboard"></i> Liste des Étudiants
+                </button>
+                <button id="AjouterunÉtudiant" class="toggle-btn" onclick="showPage('ajouter')">
+                    <i class="fa-solid fa-plus"></i> Ajouter un Étudiant
+                </button>
+            </div>
+
+            <!-- Page Liste -->
+            <div id="page-liste" class="page-content active">
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label><i class="fa-solid fa-magnifying-glass"></i> Rechercher</label>
+                        <input type="text" id="searchInput" placeholder="Nom, prénom ou N° carte..." onkeyup="filterTable()">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fa-solid fa-book"></i> Niveau</label>
+                        <select id="niveauFilter" onchange="filterTable()">
+                            <option value="">Tous les niveaux</option>
+                            <option value="L1">Licence 1</option>
+                            <option value="L2">Licence 2</option>
+                            <option value="L3">Licence 3</option>
+                            <option value="M1">Master 1</option>
+                            <option value="M2">Master 2</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fa-solid fa-graduation-cap"></i> Spécialité</label>
+                        <select id="specialiteFilter" onchange="filterTable()">
+                            <option value="">Toutes les spécialités</option>
+                            <option value="Mathématiques">Mathématiques</option>
+                            <option value="Informatique">Informatique</option>
+                            <option value="Physique">Physique</option>
+                            <option value="Chimie">Chimie</option>
+                            <option value="Biologie">Biologie</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-secondary btn-sm" onclick="resetFilters()">
+                            <i class="fa-solid fa-arrows-rotate"></i> Réinitialiser
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>N° Carte</th>
+                                <th>Nom & Prénoms</th>
+                                <th>Date Naissance</th>
+                                <th>Niveau</th>
+                                <th>Spécialité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </div>
+
+            <!-- Page Ajouter -->
+            <div id="page-ajouter" class="page-content">
+                <div class="form-container">
+                    <h2 style="color: var(--dark); margin-bottom: 25px;">
+                        <i class="fa-solid fa-plus"></i> Ajouter un Nouvel Étudiant
+                    </h2>
+                    <form id="studentForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>N° Carte Étudiant <span>*</span></label>
+                                <input type="text" id="numCarte" required placeholder="Ex: ETU2024001">
+                            </div>
+                            <div class="form-group">
+                                <label>IP</label>
+                                <input type="text" id="ip" placeholder="Ex: 192.168.1.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Nom <span>*</span></label>
+                                <input type="text" id="nom" required placeholder="Nom de famille">
+                            </div>
+                            <div class="form-group">
+                                <label>Prénoms <span>*</span></label>
+                                <input type="text" id="prenoms" required placeholder="Prénoms">
+                            </div>
+                            <div class="form-group">
+                                <label>Date de Naissance <span>*</span></label>
+                                <input type="date" id="dateNaissance" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Lieu de Naissance <span>*</span></label>
+                                <input type="text" id="lieuNaissance" required placeholder="Ville, Pays">
+                            </div>
+                            <div class="form-group">
+                                <label>Niveau <span>*</span></label>
+                                <select id="niveau" required>
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="L1">Licence 1</option>
+                                    <option value="L2">Licence 2</option>
+                                    <option value="L3">Licence 3</option>
+                                    <option value="M1">Master 1</option>
+                                    <option value="M2">Master 2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Spécialité <span>*</span></label>
+                                <select id="specialite" required>
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="Mathématiques">Mathématiques</option>
+                                    <option value="Informatique">Informatique</option>
+                                    <option value="Physique">Physique</option>
+                                    <option value="Chimie">Chimie</option>
+                                    <option value="Biologie">Biologie</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Email <span>*</span></label>
+                                <input type="email" id="email" required placeholder="exemple@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Téléphone <span>*</span></label>
+                                <input type="tel" id="telephone" required placeholder="+225 XX XX XX XX XX">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Adresse Complète</label>
+                                <textarea id="adresse" rows="3" placeholder="Adresse complète de résidence"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fa-solid fa-arrows-rotate"></i> Réinitialiser
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa-solid fa-check"></i> Enregistrer l'Étudiant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <script src="script.js"></script> 
+
+</body>
+
+</html>

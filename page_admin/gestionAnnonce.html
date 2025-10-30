@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Annonces - UFR SSMT</title>
+    <link rel="stylesheet" href="Admin.css">
+    <style>
+        :root {
+            --blue: #4e73df;
+            --indigo: #6610f2;
+            --purple: #6f42c1;
+            --pink: #e83e8c;
+            --red: #e74a3b;
+            --orange: #fd7e14;
+            --yellow: #f6c23e;
+            --green: #1cc88a;
+            --teal: #20c9a6;
+            --cyan: #36b9cc;
+            --white: #fff;
+            --gray: #858796;
+            --gray-dark: #5a5c69;
+            --primary: #4e73df;
+            --secondary: #858796;
+            --success: #1cc88a;
+            --info: #36b9cc;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--indigo) 100%);
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .menu-section {
+            padding: 10px 0;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--warning);
+        }
+
+        .menu-link.active {
+            background: rgba(255,255,255,0.15);
+            border-left-color: var(--warning);
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .btn-new-annonce {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--success) 0%, var(--teal) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-new-annonce:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-info h3 {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-info .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--light);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray);
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--indigo) 100%);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Annonces Grid */
+        .annonces-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .annonce-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .annonce-card:hover {
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .annonce-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .annonce-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .annonce-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .annonce-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .annonce-content {
+            font-size: 14px;
+            color: var(--dark);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .annonce-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(28, 200, 138, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(246, 194, 62, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(231, 74, 59, 0.2);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: rgba(54, 185, 204, 0.2);
+            color: var(--info);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--gray);
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .priority-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .priority-option {
+            padding: 12px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .priority-option:hover {
+            border-color: var(--primary);
+        }
+
+        .priority-option.selected {
+            border-color: var(--primary);
+            background: rgba(78, 115, 223, 0.1);
+            color: var(--primary);
+        }
+
+        .priority-option.info { border-color: var(--info); color: var(--info); }
+        .priority-option.success { border-color: var(--success); color: var(--success); }
+        .priority-option.warning { border-color: var(--warning); color: var(--warning); }
+        .priority-option.danger { border-color: var(--danger); color: var(--danger); }
+
+        .priority-option.selected.info { background: rgba(54, 185, 204, 0.1); }
+        .priority-option.selected.success { background: rgba(28, 200, 138, 0.1); }
+        .priority-option.selected.warning { background: rgba(246, 194, 62, 0.1); }
+        .priority-option.selected.danger { background: rgba(231, 74, 59, 0.1); }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid var(--light);
+        }
+
+        .btn-lg {
+            padding: 12px 30px;
+            font-size: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .priority-selector {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="Sidebar1"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-title">
+                <h1><i class="fas fa-bullhorn"></i> Gestion des Annonces</h1>
+                <p>Publier et gérer les annonces administratives</p>
+            </div>
+            <button class="btn-new-annonce" onclick="openNewAnnonceModal()">
+                <i class="fas fa-plus-circle"></i> Nouvelle Annonce
+            </button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-info">
+                    <h3>Total Annonces</h3>
+                    <div class="value" id="totalAnnonces">12</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-bullhorn"></i></div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-info">
+                    <h3>Publiées</h3>
+                    <div class="value" id="publishedCount">8</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-info">
+                    <h3>Brouillons</h3>
+                    <div class="value" id="draftsCount">3</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-info">
+                    <h3>Archivées</h3>
+                    <div class="value" id="archivedCount">1</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-box-archive"></i></div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="tab-btn active" onclick="filterAnnonces('all')">
+                <i class="fas fa-clipboard-list"></i> Toutes (12)
+            </button>
+            <button class="tab-btn" onclick="filterAnnonces('published')">
+                <i class="fas fa-check-circle"></i> Publiées (8)
+            </button>
+            <button class="tab-btn" onclick="filterAnnonces('draft')">
+                <i class="fas fa-file-alt"></i> Brouillons (3)
+            </button>
+            <button class="tab-btn" onclick="filterAnnonces('archived')">
+                <i class="fas fa-box-archive"></i> Archivées (1)
+            </button>
+        </div>
+
+        <!-- Annonces List -->
+        <div class="annonces-grid" id="annoncesGrid">
+            <!-- Contenu généré dynamiquement -->
+        </div>
+    </div>
+
+    <!-- Modal for New/Edit Annonce -->
+    <div class="modal" id="annonceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Nouvelle Annonce</h3>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="annonceForm">
+                <div class="form-group">
+                    <label class="form-label required">Titre de l'annonce</label>
+                    <input type="text" class="form-control" id="annonceTitle" required placeholder="Ex: Calendrier des examens">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required">Catégorie</label>
+                        <select class="form-control" id="annonceCategory" required>
+                            <option value="">Sélectionner...</option>
+                            <option value="Examens"><i class="fas fa-pen"></i> Examens</option>
+                            <option value="Résultats"><i class="fas fa-chart-bar"></i> Résultats</option>
+                            <option value="Inscription"><i class="fas fa-clipboard-list"></i> Inscription</option>
+                            <option value="Événement"><i class="fas fa-calendar-day"></i> Événement</option>
+                            <option value="Important"><i class="fas fa-exclamation-triangle"></i> Important</option>
+                            <option value="Autre"><i class="fas fa-thumbt"></i> Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">Cible</label>
+                        <select class="form-control" id="annonceTarget" required>
+                            <option value="">Sélectionner...</option>
+                            <option value="Tous">Tous les étudiants</option>
+                            <option value="L1">Licence 1</option>
+                            <option value="L2">Licence 2</option>
+                            <option value="L3">Licence 3</option>
+                            <option value="M1">Master 1</option>
+                            <option value="M2">Master 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">Contenu de l'annonce</label>
+                    <textarea class="form-control" id="annonceContent" required placeholder="Rédigez le contenu de votre annonce..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Priorité</label>
+                    <div class="priority-selector">
+                        <div class="priority-option info" data-priority="info" onclick="selectPriority('info')">
+                            <i class="fas fa-info-circle"></i> Info
+                        </div>
+                        <div class="priority-option success selected" data-priority="success" onclick="selectPriority('success')">
+                            <i class="fas fa-check-circle"></i> Normal
+                        </div>
+                        <div class="priority-option warning" data-priority="warning" onclick="selectPriority('warning')">
+                            <i class="fas fa-exclamation-triangle"></i> Important
+                        </div>
+                        <div class="priority-option danger" data-priority="danger" onclick="selectPriority('danger')">
+                            <i class="fas fa-triangle-exclamation"></i> Urgent
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Date de début</label>
+                        <input type="date" class="form-control" id="annonceStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date de fin</label>
+                        <input type="date" class="form-control" id="annonceEndDate">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary btn-lg" onclick="closeModal()">
+                        <i class="fas fa-times-circle"></i> Annuler
+                    </button>
+                    <button type="button" class="btn btn-warning btn-lg" onclick="saveDraft()">
+                        <i class="fas fa-save"></i> Enregistrer comme brouillon
+                    </button>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-paper-plane"></i> Publier l'annonce
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample annonces data
+        const annoncesData = [
+            {
+                id: 1,
+                title: 'Calendrier des Examens du Semestre 1',
+                content: 'Les examens du premier semestre auront lieu du 15 au 30 Novembre 2024. Veuillez consulter votre emploi du temps sur la plateforme.',
+                category: 'Examens',
+                priority: 'warning',
+                target: 'Tous',
+                author: 'Admin Principal',
+                date: '2024-10-20',
+                views: 1250,
+                status: 'published'
+            },
+            {
+                id: 2,
+                title: 'Publication des Résultats L3 Mathématiques',
+                content: 'Les résultats de Licence 3 Mathématiques sont maintenant disponibles. Connectez-vous pour consulter vos notes.',
+                category: 'Résultats',
+                priority: 'success',
+                target: 'L3',
+                author: 'Secrétariat Pédagogique',
+                date: '2024-10-18',
+                views: 890,
+                status: 'published'
+            },
+            {
+                id: 3,
+                title: 'Réinscription 2024-2025 - Procédure',
+                content: 'La procédure de réinscription pour l\'année académique 2024-2025 est ouverte. Deadline: 30 Octobre 2024.',
+                category: 'Inscription',
+                priority: 'danger',
+                target: 'Tous',
+                author: 'Service Scolarité',
+                date: '2024-10-15',
+                views: 2340,
+                status: 'published'
+            },
+            {
+                id: 4,
+                title: 'Conférence: Intelligence Artificielle et Mathématiques',
+                content: 'Grande conférence le 5 Novembre 2024 à 14h dans l\'amphithéâtre principal. Présence recommandée pour tous les niveaux.',
+                category: 'Événement',
+                priority: 'info',
+                target: 'Tous',
+                author: 'Département Mathématiques',
+                date: '2024-10-22',
+                views: 450,
+                status: 'published'
+            },
+            {
+                id: 5,
+                title: 'Fermeture exceptionnelle de l\'UFR',
+                content: 'L\'UFR sera fermée le 1er Novembre 2024 pour cause de jour férié. Reprise des cours le 4 Novembre.',
+                category: 'Important',
+                priority: 'warning',
+                target: 'Tous',
+                author: 'Direction UFR',
+                date: '2024-10-25',
+                views: 1890,
+                status: 'published'
+            },
+            {
+                id: 6,
+                title: 'Ouverture des candidatures Master 2',
+                content: 'Les candidatures pour le Master 2 sont ouvertes du 1er au 15 Novembre 2024.',
+                category: 'Inscription',
+                priority: 'success',
+                target: 'M1',
+                author: 'Coordination Master',
+                date: '2024-10-19',
+                views: 340,
+                status: 'published'
+            },
+            {
+                id: 7,
+                title: 'Rappel: Réclamations de notes',
+                content: 'Les réclamations de notes doivent être effectuées dans les 48h suivant la publication.',
+                category: 'Important',
+                priority: 'warning',
+                target: 'Tous',
+                author: 'Secrétariat',
+                date: '2024-10-17',
+                views: 780,
+                status: 'published'
+            },
+            {
+                id: 8,
+                title: 'Maintenance plateforme prévue',
+                content: 'La plateforme sera en maintenance le dimanche 27 Octobre de 8h à 12h.',
+                category: 'Autre',
+                priority: 'info',
+                target: 'Tous',
+                author: 'Service Informatique',
+                date: '2024-10-23',
+                views: 560,
+                status: 'published'
+            },
+            {
+                id: 9,
+                title: 'Nouvelle bibliothèque numérique',
+                content: 'Accès gratuit à la bibliothèque numérique pour tous les étudiants. Plus de 10,000 ouvrages disponibles.',
+                category: 'Autre',
+                priority: 'success',
+                target: 'Tous',
+                author: 'Bibliothèque',
+                date: '2024-10-21',
+                views: 920,
+                status: 'draft'
+            },
+            {
+                id: 10,
+                title: 'Stage obligatoire L3',
+                content: 'Rappel: Le stage de fin d\'année est obligatoire pour tous les L3. Durée: 2 mois minimum.',
+                category: 'Important',
+                priority: 'warning',
+                target: 'L3',
+                author: 'Service Stages',
+                date: '2024-10-16',
+                views: 670,
+                status: 'draft'
+            },
+            {
+                id: 11,
+                title: 'Bourse d\'excellence disponible',
+                content: 'Candidatures ouvertes pour la bourse d\'excellence 2024-2025. Dossier à soumettre avant le 10 Novembre.',
+                category: 'Important',
+                priority: 'danger',
+                target: 'Tous',
+                author: 'Service Financier',
+                date: '2024-10-14',
+                views: 1450,
+                status: 'draft'
+            },
+            {
+                id: 12,
+                title: 'Ancienne annonce test',
+                content: 'Ceci est une ancienne annonce qui a été archivée.',
+                category: 'Autre',
+                priority: 'info',
+                target: 'Tous',
+                author: 'Admin',
+                date: '2024-09-01',
+                views: 2100,
+                status: 'archived'
+            }
+        ];
+
+        let selectedPriority = 'success';
+        let editingId = null;
+
+        // Priority icons
+        // Icônes de priorité (Font Awesome)
+        const priorityIcons = {
+            info: '<i class="fa-solid fa-circle-info"></i>',       
+            success: '<i class="fa-solid fa-check-circle"></i>',   
+            warning: '<i class="fa-solid fa-triangle-exclamation"></i>',
+            danger: '<i class="fa-solid fa-circle-exclamation"></i>'     
+        };
+
+        // Icônes de catégorie (Font Awesome)
+        const categoryIcons = {
+            'Examens': '<i class="fa-solid fa-pen"></i>',         
+            'Résultats': '<i class="fa-solid fa-chart-bar"></i>',  
+            'Inscription': '<i class="fa-solid fa-clipboard-list"></i>', 
+            'Événement': '<i class="fa-solid fa-calendar-days"></i>',    
+            'Important': '<i class="fa-solid fa-bolt"></i>',       
+            'Autre': '<i class="fa-solid fa-thumbtack"></i>'      
+        };
+
+
+        // Populate annonces
+        function populateAnnonces(filter = 'all') {
+            const grid = document.getElementById('annoncesGrid');
+            grid.innerHTML = '';
+
+            const filteredAnnonces = filter === 'all'
+                ? annoncesData
+                : annoncesData.filter(a => a.status === filter);
+
+            if (filteredAnnonces.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 60px; color: var(--gray);">
+                        <div style="font-size: 64px; margin-bottom: 20px;">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                        <h3>Aucune annonce</h3>
+                        <p>Il n'y a aucune annonce dans cette catégorie</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredAnnonces.forEach(annonce => {
+                const card = document.createElement('div');
+                card.className = `annonce-card ${annonce.priority}`;
+                card.innerHTML = `
+                    <div class="annonce-header">
+                        <div style="flex: 1;">
+                            <div class="annonce-title">
+                                ${priorityIcons[annonce.priority]} ${annonce.title}
+                            </div>
+                            <div class="annonce-meta">
+                                <span>${categoryIcons[annonce.category]} ${annonce.category}</span>
+                                <span><i class="fa-solid fa-user"></i> ${annonce.author}</span>
+                                <span><i class="fa-solid fa-calendar-day"></i> ${formatDate(annonce.date)}</span>
+                                <span><i class="fa-solid fa-eye"></i> ${annonce.views} vues</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="annonce-content">
+                        ${annonce.content}
+                    </div>
+                    <div class="annonce-footer">
+                        <div>
+                            <span class="badge badge-${getStatusBadgeClass(annonce.status)}">
+                                ${getStatusText(annonce.status)}
+                            </span>
+                            <span class="badge badge-info" style="margin-left: 8px;">
+                                <i class="fa-solid fa-bullseye"></i> ${annonce.target}
+                            </span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="viewAnnonce(${annonce.id})">
+                                <i class="fa-solid fa-eye"></i> Voir
+                            </button>
+                            <button class="btn btn-warning" onclick="editAnnonce(${annonce.id})">
+                                <i class="fa-solid fa-pen"></i> Modifier
+                            </button>
+                            ${annonce.status === 'draft' ? `
+                                <button class="btn btn-success" onclick="publishAnnonce(${annonce.id})">
+                                    <i class="fa-solid fa-upload"></i> Publier
+                                </button>
+                            ` : ''}
+                            ${annonce.status === 'published' ? `
+                                <button class="btn btn-danger" onclick="archiveAnnonce(${annonce.id})">
+                                    <i class="fa-solid fa-box-archive"></i> Archiver
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-danger" onclick="deleteAnnonce(${annonce.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        // Get status text
+        function getStatusText(status) {
+            const texts = {
+                published: 'Publiée',
+                draft: 'Brouillon',
+                archived: 'Archivée'
+            };
+            return texts[status] || status;
+        }
+
+        // Get status badge class
+        function getStatusBadgeClass(status) {
+            const classes = {
+                published: 'success',
+                draft: 'warning',
+                archived: 'danger'
+            };
+            return classes[status] || 'info';
+        }
+
+        // Filter annonces
+        function filterAnnonces(filter) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            populateAnnonces(filter);
+        }
+
+        // Select priority
+        function selectPriority(priority) {
+            document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.classList.add('selected');
+            selectedPriority = priority;
+        }
+
+        // Open new annonce modal
+        function openNewAnnonceModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = ' Nouvelle Annonce';
+            document.getElementById('annonceForm').reset();
+            selectedPriority = 'success';
+            document.querySelectorAll('.priority-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.dataset.priority === 'success') opt.classList.add('selected');
+            });
+            document.getElementById('annonceModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('annonceModal').classList.remove('active');
+        }
+
+        // View annonce
+        function viewAnnonce(id) {
+            const annonce = annoncesData.find(a => a.id === id);
+            alert(`Titre: ${annonce.title}\n\nContenu: ${annonce.content}\n\nCatégorie: ${annonce.category}\nCible: ${annonce.target}`);
+        }
+
+        // Edit annonce
+        function editAnnonce(id) {
+            const annonce = annoncesData.find(a => a.id === id);
+            editingId = id;
+            
+            document.getElementById('modalTitle').textContent = ' Modifier l\'annonce';
+            document.getElementById('annonceTitle').value = annonce.title;
+            document.getElementById('annonceCategory').value = annonce.category;
+            document.getElementById('annonceTarget').value = annonce.target;
+            document.getElementById('annonceContent').value = annonce.content;
+            
+            selectedPriority = annonce.priority;
+            document.querySelectorAll('.priority-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.dataset.priority === annonce.priority) opt.classList.add('selected');
+            });
+            
+            document.getElementById('annonceModal').classList.add('active');
+        }
+
+        // Publish annonce
+        function publishAnnonce(id) {
+            const confirm = window.confirm('Voulez-vous publier cette annonce ? Elle sera visible par tous les étudiants.');
+            if (confirm) {
+                const annonce = annoncesData.find(a => a.id === id);
+                annonce.status = 'published';
+                populateAnnonces('all');
+                updateStats();
+                showNotification('Annonce publiée avec succès', 'success');
+            }
+        }
+
+        // Archive annonce
+        function archiveAnnonce(id) {
+            const confirm = window.confirm('Voulez-vous archiver cette annonce ? Elle ne sera plus visible par les étudiants.');
+            if (confirm) {
+                const annonce = annoncesData.find(a => a.id === id);
+                annonce.status = 'archived';
+                populateAnnonces('all');
+                updateStats();
+                showNotification('Annonce archivée', 'warning');
+            }
+        }
+
+        // Delete annonce
+        function deleteAnnonce(id) {
+            const confirm = window.confirm('Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.');
+            if (confirm) {
+                const index = annoncesData.findIndex(a => a.id === id);
+                annoncesData.splice(index, 1);
+                populateAnnonces('all');
+                updateStats();
+                showNotification('Annonce supprimée', 'danger');
+            }
+        }
+
+        // Save draft
+        function saveDraft() {
+            const title = document.getElementById('annonceTitle').value;
+            const category = document.getElementById('annonceCategory').value;
+            const target = document.getElementById('annonceTarget').value;
+            const content = document.getElementById('annonceContent').value;
+
+            if (!title || !category || !target || !content) {
+                showNotification('Veuillez remplir tous les champs obligatoires', 'warning');
+                return;
+            }
+
+            const newAnnonce = {
+                id: annoncesData.length + 1,
+                title,
+                content,
+                category,
+                priority: selectedPriority,
+                target,
+                author: 'Admin Principal',
+                date: new Date().toISOString().split('T')[0],
+                views: 0,
+                status: 'draft'
+            };
+
+            if (editingId) {
+                const index = annoncesData.findIndex(a => a.id === editingId);
+                annoncesData[index] = { ...annoncesData[index], ...newAnnonce, id: editingId };
+                showNotification('Brouillon mis à jour', 'success');
+            } else {
+                annoncesData.unshift(newAnnonce);
+                showNotification('Brouillon enregistré', 'success');
+            }
+
+            closeModal();
+            populateAnnonces('all');
+            updateStats();
+        }
+
+        // Submit form
+        document.getElementById('annonceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('annonceTitle').value;
+            const category = document.getElementById('annonceCategory').value;
+            const target = document.getElementById('annonceTarget').value;
+            const content = document.getElementById('annonceContent').value;
+
+            const newAnnonce = {
+                id: annoncesData.length + 1,
+                title,
+                content,
+                category,
+                priority: selectedPriority,
+                target,
+                author: 'Admin Principal',
+                date: new Date().toISOString().split('T')[0],
+                views: 0,
+                status: 'published'
+            };
+
+            if (editingId) {
+                const index = annoncesData.findIndex(a => a.id === editingId);
+                annoncesData[index] = { ...annoncesData[index], ...newAnnonce, id: editingId, status: 'published' };
+                showNotification('Annonce modifiée et publiée', 'success');
+            } else {
+                annoncesData.unshift(newAnnonce);
+                showNotification('Annonce publiée avec succès', 'success');
+            }
+
+            closeModal();
+            populateAnnonces('all');
+            updateStats();
+        });
+
+        // Update stats
+        function updateStats() {
+            const published = annoncesData.filter(a => a.status === 'published').length;
+            const drafts = annoncesData.filter(a => a.status === 'draft').length;
+            const archived = annoncesData.filter(a => a.status === 'archived').length;
+
+            document.getElementById('totalAnnonces').textContent = annoncesData.length;
+            document.getElementById('publishedCount').textContent = published;
+            document.getElementById('draftsCount').textContent = drafts;
+            document.getElementById('archivedCount').textContent = archived;
+        }
+
+        // Navigation
+        function goToPage(page) {
+            showNotification(`Navigation vers: ${page}`, 'info');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'var(--success)',
+                danger: 'var(--danger)',
+                warning: 'var(--warning)',
+                info: 'var(--info)'
+            };
+
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                z-index: 99999;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            if (!document.querySelector('style[data-notif]')) {
+                style.setAttribute('data-notif', 'true');
+                document.head.appendChild(style);
+            }
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            populateAnnonces('all');
+            updateStats();
+        });
+    </script> 
+    <script src="script.js"></script>
+
+</body>
+</html>

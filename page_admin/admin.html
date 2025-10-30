@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - UFR SSMT</title>
+    <link rel="stylesheet" href="Admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="Sidebar1">
+        
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-title">
+                <h1>Tableau de Bord</h1>
+                <p>Vue d'ensemble de l'UFR SSMT - Année académique 2024-2025</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">AD</div>
+                <div class="user-details">
+                    <h3>Administrateur Principal</h3>
+                    <p>admin@ufr-ssmt.edu.ci</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards with Circular Progress -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="circular-progress" data-progress="87">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="264"></circle>
+                    </svg>
+                    <div class="progress-value">87%</div>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-title">Total Étudiants</div>
+                    <div class="stat-value">3,247</div>
+                    <div class="stat-description">Inscrits cette année</div>
+                    <span class="stat-change positive">↑ 12% vs année précédente</span>
+                </div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="circular-progress" data-progress="65">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="264"></circle>
+                    </svg>
+                    <div class="progress-value">65%</div>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-title">Résultats Publiés</div>
+                    <div class="stat-value">1,856</div>
+                    <div class="stat-description">Bulletins disponibles</div>
+                    <span class="stat-change positive">↑ 8 aujourd'hui</span>
+                </div>
+            </div>
+
+            <div class="stat-card orange">
+                <div class="circular-progress" data-progress="35">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="264"></circle>
+                    </svg>
+                    <div class="progress-value">35%</div>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-title">Réclamations</div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-description">En attente de traitement</div>
+                    <span class="stat-change negative">↑ 5 nouvelles</span>
+                </div>
+            </div>
+
+            <div class="stat-card red">
+                <div class="circular-progress" data-progress="15">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="264"></circle>
+                    </svg>
+                    <div class="progress-value">15%</div>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-title">Réclamations Urgentes</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-description">Plus de 7 jours</div>
+                    <span class="stat-change negative">Nécessite action</span>
+                </div>
+            </div>
+
+            <div class="stat-card purple">
+                <div class="circular-progress" data-progress="92">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="264"></circle>
+                    </svg>
+                    <div class="progress-value">92%</div>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-title">Enseignants</div>
+                    <div class="stat-value">87</div>
+                    <div class="stat-description">Enseignants actifs</div>
+                    <span class="stat-change positive">↑ 3 ce semestre</span>
+                </div>
+            </div>
+
+            <div class="stat-card teal">
+                <div class="circular-progress" data-progress="78">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="circle-progress" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="264"></circle>
+                    </svg>
+                    <div class="progress-value">78%</div>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-title">Unités d'Enseignement</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-description">UE ce semestre</div>
+                    <span class="stat-change positive">Toutes actives</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Recent Activity -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">Activités Récentes</h3>
+                    <a href="#" class="card-action" onclick="viewAllActivities(); return false;">Voir tout →</a>
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon blue"><i class="fas fa-book-open"></i></div>
+                        <div class="activity-details">
+                            <p class="activity-text"><strong>Notes publiées</strong> - Licence 3 Mathématiques (UE MAT301)</p>
+                            <p class="activity-time">Il y a 15 minutes</p>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon green"><i class="fas fa-envelope-open-text"></i></div>
+                        <div class="activity-details">
+                            <p class="activity-text"><strong>Réclamation traitée</strong> - Étudiant #2024-8754</p>
+                            <p class="activity-time">Il y a 1 heure</p>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon orange"><i class="fas fa-bullhorn"></i></div>
+                        <div class="activity-details">
+                            <p class="activity-text"><strong>Annonce publiée</strong> - Calendrier des examens S2</p>
+                            <p class="activity-time">Il y a 2 heures</p>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon blue"><i class="fas fa-user-plus"></i></div>
+                        <div class="activity-details">
+                            <p class="activity-text"><strong>Nouveaux étudiants</strong> - 23 inscriptions validées</p>
+                            <p class="activity-time">Il y a 3 heures</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">Actions Rapides</h3>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn primary" onclick="quickAction('Saisir des notes')">
+                        <div class="quick-action-icon"><i class="fas fa-book-open"></i></div>
+                        <span><a href="./Admin_Notes.html">Saisir des notes</a></span>
+                    </button>
+                    <button class="quick-action-btn danger" onclick="quickAction('Publier une annonce')">
+                        <div class="quick-action-icon"><i class="fas fa-bullhorn"></i></div>
+                        <span><a href="./gestionAnnonce.html">Publier une annonce</a></span>
+                    </button>
+                    <button class="quick-action-btn info" onclick="quickAction('Ajouter un étudiant')">
+                        <div class="quick-action-icon"><i class="fas fa-user-plus"></i></div>
+                        <span> <a href="./gestionEtudiants.html">Ajouter un étudiant</a></span>
+                    </button>
+                    <button class="quick-action-btn warning" onclick="quickAction('Traiter réclamations')">
+                        <div class="quick-action-icon"><i class="fas fa-envelope-open-text"></i></div>
+                        <span><a href="./Reclamation_Admin.html">Traiter réclamations</a></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script> 
+
+</body>
+</html>

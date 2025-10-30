@@ -1,0 +1,68 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>UFR SSMT</h2>
+            <p>Panneau d'Administration</p>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-item">
+                <a href="admin.html" class="menu-link active">
+                    <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+                    <span class="menu-text">Tableau de Bord</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="gestionEtudiants.html" class="menu-link" onclick="toggleSubmenu(this)">
+                    <span class="menu-icon"><i class="fas fa-user-graduate"></i></span>
+                    <span class="menu-text">Gestion des Étudiants</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="Admin_Notes.html" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-book-open"></i></span>
+                    <span class="menu-text">Gestion des Notes</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="Reclamation_Admin.html" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-envelope-open-text"></i></span>
+                    <span class="menu-text">Réclamations</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="gestionAnnonce.html" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-bullhorn"></i></span>
+                    <span class="menu-text">Annonces</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="../index.html" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-home"></i></span>
+                    <span class="menu-text">Accueil</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a class="menu-link" onclick="toggleSubmenu(this)">
+                    <span class="menu-icon"><i class="fas fa-cogs"></i></span>
+                    <span class="menu-text">Paramètres</span>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a class="menu-link" onclick="logout()">
+                    <span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="menu-text">Déconnexion</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
